@@ -34,8 +34,13 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
 
 /* This verifies the *refresh token* (when it is time update the access token)  */
 const authenticateRefresh = (req: Request, res: Response, next: NextFunction) => { // Refresh token is received in httpOnly cookie that comes with every axios request where { credentials: true }
+  console.log("req.cookies.refreshToken")
+  console.log(req.cookies.refreshToken)
   try {
+    console.log("about to try jwt.verify")
     const payload = jwt.verify(req.cookies.refreshToken, REFRESH_TOKEN_SECRET) as UserPayload
+    console.log("payload")
+    console.log(payload)
     req.body.userId = payload._id
     next();
 
