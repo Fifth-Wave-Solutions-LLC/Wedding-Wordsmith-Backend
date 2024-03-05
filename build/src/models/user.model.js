@@ -14,6 +14,10 @@ const UserSchema = new mongoose_1.default.Schema({
         type: String,
         required: [true, "Last name is required"]
     },
+    userName: {
+        type: String,
+        required: [true, "User name is required"]
+    },
     email: {
         type: String,
         required: [true, "Email is required"],
@@ -29,7 +33,10 @@ const UserSchema = new mongoose_1.default.Schema({
     },
     roles: [{
             type: Number
-        }]
+        }],
+    tokenBalance: {
+        type: Number
+    }
 }, {
     timestamps: true
 });
