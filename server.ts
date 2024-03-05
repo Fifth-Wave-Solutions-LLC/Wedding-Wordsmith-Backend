@@ -11,7 +11,9 @@ const port: number = 8000 // Express port
 app.use(express.json());
 app.use(express.urlencoded({extended:true})); // has to do with bodyParser
 // app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
-app.use(cors({ origin: ['http://localhost:5173', 'http://api.weddingwordsmith.com', 'https://api.weddingwordsmith.com', 'http://www.weddingws.com', 'http://weddingws.com', 'https://www.weddingws.com', 'https://weddingws.com'], credentials: true }))
+app.use(cors({ origin: ['http://localhost:5173', 'http://api.weddingwordsmith.com', 'https://api.weddingwordsmith.com', 'http://www.weddingws.com', 'http://weddingws.com', 'https://www.weddingws.com', 'https://weddingws.com'],
+allowedHeaders: ['Content-Type', 'Authorization'],
+credentials: true }))
 app.use(cookieParser());
 
 require("./src/config/mongoose.config"); // start database connection here

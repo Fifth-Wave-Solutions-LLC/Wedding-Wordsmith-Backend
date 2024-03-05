@@ -35,3 +35,11 @@ https://docs.render.com/custom-domains#:~:text=Adding%20a%20Custom%20Domain&text
 **useContest w/ Typescript**
 * https://spencerpauly.com/tech/how-to-type-react-context-with-typescript/
 * https://blog.logrocket.com/how-to-use-react-context-typescript/
+
+**CORS Issues**
+* https://community.render.com/t/domain-needed-for-backend/6341
+* SAME ERROR MESSAGE: https://community.render.com/t/cors-redirect-issue-for-verified-domain/5593
+
+**Cookie**
+* https://community.render.com/t/third-party-cookies-must-be-enabled-to-set-cookie-on-the-browser/11597
+* https://community.render.com/t/cross-site-tracking/13746
