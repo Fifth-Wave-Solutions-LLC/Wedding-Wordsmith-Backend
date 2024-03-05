@@ -115,6 +115,7 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 const logout = (req, res, next) => {
+    console.log("logging out, clearing refreshToken cookie")
     res.clearCookie('refreshToken');
     res.sendStatus(200);
 };
