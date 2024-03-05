@@ -73,7 +73,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
                 const refreshToken = generateRefreshToken(user);
                 res
                     .status(201)
-                    .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE })
+                    .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE, sameSite: 'none', secure: true })
                     .json({ msg: "Successful login", user: user, accessToken: accessToken });
             }
             else { // Password was NOT a match
