@@ -40,7 +40,7 @@ const login = async(req: Request, res: Response, next: NextFunction) => {
         const refreshToken = generateRefreshToken(user);  
         res
           .status(201)
-          .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge : REFRESH_COOKIE_MAXAGE, sameSite: 'none', secure: true })
+          .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge : REFRESH_COOKIE_MAXAGE, sameSite: 'none', secure: true, domain: '.weddingws.com' })
           .json({msg: "Successful login", user : user, accessToken : accessToken})
       } else {                                                      // Password was NOT a match
         console.log("Fail with incorrect password")
