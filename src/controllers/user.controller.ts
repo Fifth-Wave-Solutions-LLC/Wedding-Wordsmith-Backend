@@ -26,13 +26,13 @@ function generateRefreshToken(user: IUser) {
 const login = async(req: Request, res: Response, next: NextFunction) => {
   console.log("attempting login")
   try {
-    const user = await UserModel.findOne({ email: req.body.email });     // Search for the given email
-    if (user === null) {                                            // Email NOT found in 'users' collection
-      console.log("Fail with no matching email address")
+    const user = await UserModel.findOne({ userName: req.body.userName });     // Search for the given userName
+    if (user === null) {                                            // userName NOT found in 'users' collection
+      console.log("Fail with no matching userName")
       res.status(401).json({message:"Invalid Credentials"});
     } else {
       const isCorrectPW = await bcrypt.compare(req.body.password, user.password); // compare PW given with PW hash in DB
-      console.log("There is a matching email")
+      console.log("There is a matching userName")
       if(isCorrectPW) {                                             // Password was a match!
         // *The first value passed into jwt.sign is the 'payload'. This can be retrieved in jwt.verify
         console.log("There is a matching password")
@@ -64,9 +64,9 @@ const updateUser = async(req: Request, res: Response, next: NextFunction) => {
 // An INVITEE can become a MEMBER by registering
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const possibleUser = await UserModel.findOne({ email : req.body.email })
+    const possibleUser = await UserModel.findOne({ userName : req.body.userName })
     if (possibleUser) {
-      res.status(400).json({errors: { email : { message : 'This email already exists. Please log in.' }}})
+      res.status(400).json({errors: { userName : { message : 'This userName already exists. Please log in.' }}})
     } else {
       const newUser = await UserModel.create(req.body)
       // *The first value passed into jwt.sign is the 'payload'. This can be retrieved in jwt.verify

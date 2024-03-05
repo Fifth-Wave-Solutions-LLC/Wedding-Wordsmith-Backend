@@ -5,10 +5,12 @@ export interface IUser {
   _id: string;
   firstName: string;
   lastName: string;
+  userName: string;
   email: string;
   password: string;
   _confirmPassword: string;
   roles: number[];
+  tokenBalance: number;
   createdAt: mongoose.Schema.Types.Date;
   updatedAt: mongoose.Schema.Types.Date;
 }
@@ -21,6 +23,10 @@ const UserSchema = new mongoose.Schema<IUser>({
     lastName: {
       type: String,
       required: [true, "Last name is required"]
+    },
+    userName: {
+      type: String,
+      required: [true, "User name is required"]
     },
     email: {
       type: String,
@@ -37,7 +43,10 @@ const UserSchema = new mongoose.Schema<IUser>({
     },
     roles: [{
       type: Number
-    }] 
+    }], 
+    tokenBalance: {
+      type: Number
+    } 
   }, {
     timestamps: true
   });

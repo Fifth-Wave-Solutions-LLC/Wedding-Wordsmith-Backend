@@ -58,14 +58,14 @@ function generateRefreshToken(user) {
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("attempting login");
     try {
-        const user = yield user_model_1.default.findOne({ email: req.body.email }); // Search for the given email
-        if (user === null) { // Email NOT found in 'users' collection
-            console.log("Fail with no matching email address");
+        const user = yield user_model_1.default.findOne({ userName: req.body.userName }); // Search for the given userName
+        if (user === null) { // userName NOT found in 'users' collection
+            console.log("Fail with no matching userName");
             res.status(401).json({ message: "Invalid Credentials" });
         }
         else {
             const isCorrectPW = yield bcrypt_1.default.compare(req.body.password, user.password); // compare PW given with PW hash in DB
-            console.log("There is a matching email");
+            console.log("There is a matching userName");
             if (isCorrectPW) { // Password was a match!
                 // *The first value passed into jwt.sign is the 'payload'. This can be retrieved in jwt.verify
                 console.log("There is a matching password");
@@ -73,7 +73,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
                 const refreshToken = generateRefreshToken(user);
                 res
                     .status(201)
-                    .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE, sameSite: 'lax', secure: true })
+                    .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE })
                     .json({ msg: "Successful login", user: user, accessToken: accessToken });
             }
             else { // Password was NOT a match
@@ -95,9 +95,9 @@ const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 // An INVITEE can become a MEMBER by registering
 const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const possibleUser = yield user_model_1.default.findOne({ email: req.body.email });
+        const possibleUser = yield user_model_1.default.findOne({ userName: req.body.userName });
         if (possibleUser) {
-            res.status(400).json({ errors: { email: { message: 'This email already exists. Please log in.' } } });
+            res.status(400).json({ errors: { userName: { message: 'This userName already exists. Please log in.' } } });
         }
         else {
             const newUser = yield user_model_1.default.create(req.body);
@@ -185,4 +185,4 @@ const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
   .then(allUsers => res.status(200).json(allUsers))
   .catch(err => res.status(400).json(err))
 }
-*/ 
+*/
