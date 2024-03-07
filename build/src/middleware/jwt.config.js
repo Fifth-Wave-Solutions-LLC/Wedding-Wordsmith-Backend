@@ -7,8 +7,16 @@ exports.authenticateRefresh = exports.authenticate = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config(); // load environmental variables
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET; // For production/deployment
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET; // For production/deployment
+let ACCESS_TOKEN_SECRET = "";
+let REFRESH_TOKEN_SECRET = "";
+if (process.env.DEPLOYED_STATUS) {
+    ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET; // For production/deployment
+    REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET; // For production/deployment
+}
+else {
+    REFRESH_TOKEN_SECRET = "secret_key"; // For development
+    ACCESS_TOKEN_SECRET = "secret_key"; // For development
+}
 /* This file is our 'middleware'
   Every time our express server uses get, post, patch, etc.,
   we include the below function to *authenticate* the token that is
@@ -32,13 +40,13 @@ const authenticate = (req, res, next) => {
 exports.authenticate = authenticate;
 /* This verifies the *refresh token* (when it is time update the access token)  */
 const authenticateRefresh = (req, res, next) => {
-    console.log("req.cookies.refreshToken");
-    console.log(req.cookies.refreshToken);
+    // console.log("req.cookies.refreshToken")
+    // console.log(req.cookies.refreshToken)
     try {
-        console.log("about to try jwt.verify");
+        // console.log("about to try jwt.verify")
         const payload = jsonwebtoken_1.default.verify(req.cookies.refreshToken, REFRESH_TOKEN_SECRET);
-        console.log("payload");
-        console.log(payload);
+        // console.log("payload")
+        // console.log(payload)
         req.body.userId = payload._id;
         next();
     }
