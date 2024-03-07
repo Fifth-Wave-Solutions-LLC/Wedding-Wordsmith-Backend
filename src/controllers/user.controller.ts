@@ -91,7 +91,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
 const logout = (req: Request, res: Response, next: NextFunction) => {
   console.log("Logout, clearing cookie.")
-  res.clearCookie('refreshToken')
+  res.clearCookie('refreshToken', { httpOnly: true, maxAge : REFRESH_COOKIE_MAXAGE})
   res.sendStatus(200)
 }
 

@@ -122,7 +122,7 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 });
 const logout = (req, res, next) => {
     console.log("Logout, clearing cookie.");
-    res.clearCookie('refreshToken');
+    res.clearCookie('refreshToken', { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE });
     res.sendStatus(200);
 };
 const refreshToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
