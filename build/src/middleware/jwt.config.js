@@ -33,16 +33,22 @@ const authenticate = (req, res, next) => {
         next();
     }
     catch (err) {
-        console.log("Access token auth failed or expired within jwt.config.js");
+        console.log("Access token auth failed or expired within jwt.config.ts");
         res.status(403).json({ verified: false });
     }
 };
 exports.authenticate = authenticate;
 /* This verifies the *refresh token* (when it is time update the access token)  */
 const authenticateRefresh = (req, res, next) => {
+    var _a;
     // console.log("req.cookies.refreshToken")
     // console.log(req.cookies.refreshToken)
     try {
+        let partialRT = "No Cookie Present";
+        if ((_a = req === null || req === void 0 ? void 0 : req.cookies) === null || _a === void 0 ? void 0 : _a.refreshToken) {
+            partialRT = req.cookies.refreshToken.substring(req.cookies.refreshToken.length - 8);
+        }
+        console.log(`Attempting refresh of accessToken with refreshToken ending with: ${partialRT}`);
         // console.log("about to try jwt.verify")
         const payload = jsonwebtoken_1.default.verify(req.cookies.refreshToken, REFRESH_TOKEN_SECRET);
         // console.log("payload")
@@ -51,7 +57,7 @@ const authenticateRefresh = (req, res, next) => {
         next();
     }
     catch (err) {
-        console.log("Refresh token auth failed or expired within jwt.config.js");
+        console.log("Refresh token auth failed or expired within jwt.config.ts");
         console.error(err);
         res.status(403).json({ verified: false });
     }

@@ -50,7 +50,7 @@ else {
     REFRESH_TOKEN_SECRET = "secret_key"; // For development
     ACCESS_TOKEN_SECRET = "secret_key"; // For development
 }
-const ACCESS_TOKEN_DURATION = '30s'; // TODO reduce this once cookies are working
+const ACCESS_TOKEN_DURATION = '7d'; // TODO reduce this once cookies are working
 const REFRESH_TOKEN_DURATION = '60d';
 const REFRESH_COOKIE_MAXAGE = 60 * 24 * 60 * 60 * 1000;
 function generateAccessToken(user) {
@@ -62,7 +62,7 @@ function generateRefreshToken(user) {
     return refreshToken;
 }
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log("attempting login")
+    console.log(`Login attempt by ${req.body.userName}`);
     try {
         const user = yield user_model_1.default.findOne({ userName: req.body.userName }); // Search for the given userName
         if (user === null) { // userName NOT found in 'users' collection
@@ -77,6 +77,9 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
                 // console.log("There is a matching password")
                 const accessToken = generateAccessToken(user);
                 const refreshToken = generateRefreshToken(user);
+                const partialRT = refreshToken.substring(refreshToken.length - 8);
+                console.log(`Login attempt successful by ${req.body.userName}`);
+                console.log(`Setting cookie with refreshToken ending with ${partialRT}`);
                 res
                     .status(201)
                     .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE, sameSite: "none", secure: true })
@@ -122,7 +125,7 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 });
 const logout = (req, res, next) => {
     console.log("Logout, clearing cookie.");
-    res.clearCookie('refreshToken', { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE });
+    res.clearCookie('refreshToken');
     res.sendStatus(200);
 };
 const refreshToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
