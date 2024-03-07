@@ -14,7 +14,7 @@ const port = 8000; // Express port
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true })); // has to do with bodyParser
 // app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
-app.use((0, cors_1.default)({ origin: ['http://localhost:5173', 'http://api.weddingwordsmith.com', 'https://api.weddingwordsmith.com', 'http://www.weddingws.com', 'http://weddingws.com', 'https://www.weddingws.com', 'https://weddingws.com'],
+app.use((0, cors_1.default)({ origin: ['http://localhost:5173', 'https://weddingwordsmith.com', 'http://api.weddingwordsmith.com', 'https://api.weddingwordsmith.com', 'http://www.weddingws.com', 'http://weddingws.com', 'https://www.weddingws.com', 'https://weddingws.com'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true }));
 app.use((0, cookie_parser_1.default)());
