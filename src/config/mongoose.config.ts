@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config()
 
-/* LOCAL MONGO CONFIG 
+/* LOCAL MONGO CONFIG */
 const DBNAME = "wedding_wordsmith";
 
 async function connect() {
@@ -15,16 +15,16 @@ async function connect() {
     }
 }
 connect();
- END LOCAL MONGO CONFIG */
+ /* END LOCAL MONGO CONFIG */
 
-/** DEPLOYED MONGO ATLAS CONFIG */
+/** DEPLOYED MONGO ATLAS CONFIG 
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME || ""
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || ""
 const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.zdfumif.mongodb.net/appName=Cluster0`
 
 
-async function connect() {
+async function connect(): Promise<void> {
   try {
     await mongoose.connect(MONGO_URL,  { retryWrites: true, w: 'majority'});  
     console.log(`Established a connection to MongoDB Atlas`)
@@ -34,7 +34,7 @@ async function connect() {
 }
 connect();
 
-
+*/
 
 
 // const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 1337 // MongoDB port - if local / Not Cloud ?

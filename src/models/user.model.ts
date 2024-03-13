@@ -54,11 +54,11 @@ const UserSchema = new mongoose.Schema<IUser>({
 
 /* Mongoose virtual for 'confirmPassword' field */
 UserSchema.virtual('confirmPassword')
-.get( function () { return this._confirmPassword})  // getter
-.set( function (value: string) { this._confirmPassword = value } ) // setter
+.get( function (): string { return this._confirmPassword})  // getter
+.set( function (value: string): void { this._confirmPassword = value } ) // setter
 
 /* Before saving, validate by comparing 'password' to 'confirmPassword */
-UserSchema.pre('validate', function(next) {
+UserSchema.pre('validate', function(next): void {
   if (this.password !== this._confirmPassword) {
     this.invalidate('confirmPassword', 'Password must match confirm password');
   }
@@ -66,9 +66,9 @@ UserSchema.pre('validate', function(next) {
 })
 
 /* Before saving, convert 'password' to hash with bcrypt */
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function(next): void {
   bcrypt.hash(this.password, 10) // bcrypt.hash returns a promise. 10 salt 'rounds'
-    .then((hash: string) => { 
+    .then((hash: string): void => { 
       this.password = hash;
       next();
     }); 

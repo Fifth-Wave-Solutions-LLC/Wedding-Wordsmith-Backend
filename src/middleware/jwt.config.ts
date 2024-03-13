@@ -26,7 +26,7 @@ interface UserPayload {
   which executes the .then() immediately following sending the request
   to the server
   */
-const authenticate = (req: Request, res: Response, next: NextFunction) => {
+const authenticate = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const payload = jwt.verify(req.headers['authorization']?.split(" ")[1] as string, ACCESS_TOKEN_SECRET) as UserPayload
     req.body.userId = payload._id
@@ -38,7 +38,7 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
 };
 
 /* This verifies the *refresh token* (when it is time update the access token)  */
-const authenticateRefresh = (req: Request, res: Response, next: NextFunction) => { // Refresh token is received in httpOnly cookie that comes with every axios request where { credentials: true }
+const authenticateRefresh = (req: Request, res: Response, next: NextFunction): void => { // Refresh token is received in httpOnly cookie that comes with every axios request where { credentials: true }
   // console.log("req.cookies.refreshToken")
   // console.log(req.cookies.refreshToken)
   try {
