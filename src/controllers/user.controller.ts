@@ -6,8 +6,8 @@ import dotenv from 'dotenv'
 
 dotenv.config()                 // loads any environmental variables that we have
 
-let ACCESS_TOKEN_SECRET = ""
-let REFRESH_TOKEN_SECRET = ""
+let ACCESS_TOKEN_SECRET: string = ""
+let REFRESH_TOKEN_SECRET: string = ""
 if(process.env.DEPLOYED_STATUS){
    ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string // For production/deployment
    REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string // For production/deployment
@@ -16,21 +16,22 @@ if(process.env.DEPLOYED_STATUS){
    ACCESS_TOKEN_SECRET = "secret_key" // For development
 }
 
-const ACCESS_TOKEN_DURATION = '7d' // TODO reduce this once cookies are working
-const REFRESH_TOKEN_DURATION = '60d'
-const REFRESH_COOKIE_MAXAGE = 60*24*60*60*1000
+const ACCESS_TOKEN_DURATION: string = '7d' // TODO reduce this once cookies are working
+const REFRESH_TOKEN_DURATION: string = '60d'
+const REFRESH_COOKIE_MAXAGE: number = 60*24*60*60*1000
 
-function generateAccessToken(user: IUser) {
+function generateAccessToken(user: IUser): string {
   const accessToken = jwt.sign({ _id : user._id }, ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_DURATION });
   return accessToken;
 }
-function generateRefreshToken(user: IUser) {
+function generateRefreshToken(user: IUser): string {
   const refreshToken = jwt.sign({ _id : user._id }, REFRESH_TOKEN_SECRET, {expiresIn: REFRESH_TOKEN_DURATION}); 
   return refreshToken;
 }
 
-const login = async(req: Request, res: Response, next: NextFunction) => {
+const login = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
   console.log(`Login attempt by ${req.body.userName}`)
+  req.body.userName = req.body.userName.toLowerCase()
   try {
     const user = await UserModel.findOne({ userName: req.body.userName });     // Search for the given userName
     if (user === null) {                                            // userName NOT found in 'users' collection
@@ -63,15 +64,16 @@ const login = async(req: Request, res: Response, next: NextFunction) => {
 }
 
 // This is where an MANAGER can create a new INVITEE with NO permission
-const create = async(req: Request, res: Response, next: NextFunction) => {
+const create = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
 }
 
 // A MANAGER or MEMBER can update their profile
-const updateUser = async(req: Request, res: Response, next: NextFunction) => {
+const updateUser = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
 }
 
 // An INVITEE can become a MEMBER by registering
-const register = async (req: Request, res: Response, next: NextFunction) => {
+const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  req.body.userName = req.body.userName.toLowerCase()
   try {
     const possibleUser = await UserModel.findOne({ userName : req.body.userName })
     if (possibleUser) {
@@ -92,13 +94,13 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-const logout = (req: Request, res: Response, next: NextFunction) => {
+const logout = (req: Request, res: Response, next: NextFunction): void => {
   console.log("Logout, clearing cookie.")
   res.clearCookie('refreshToken')
   res.sendStatus(200)
 }
 
-const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+const refreshToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const currentUser = await UserModel.findOne({_id : req.body.userId});
     if(currentUser !== null ){
