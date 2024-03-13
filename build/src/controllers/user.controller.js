@@ -63,9 +63,12 @@ function generateRefreshToken(user) {
 }
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Login attempt by ${req.body.userName}`);
+    req.body.userName = req.body.userName.toLowerCase();
+    console.log(`Login string used: ${req.body.userName}`);
     try {
         const user = yield user_model_1.default.findOne({ userName: req.body.userName }); // Search for the given userName
         if (user === null) { // userName NOT found in 'users' collection
+            console.log(`Login failed. used: ${req.body.userName}`);
             console.log("Fail with no matching userName");
             res.status(401).json({ message: "Invalid Credentials" });
         }
@@ -103,6 +106,7 @@ const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 // An INVITEE can become a MEMBER by registering
 const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    req.body.userName = req.body.userName.toLowerCase();
     try {
         const possibleUser = yield user_model_1.default.findOne({ userName: req.body.userName });
         if (possibleUser) {
