@@ -32,9 +32,11 @@ function generateRefreshToken(user: IUser): string {
 const login = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
   console.log(`Login attempt by ${req.body.userName}`)
   req.body.userName = req.body.userName.toLowerCase()
+  console.log(`Login string used: ${req.body.userName}`)
   try {
     const user = await UserModel.findOne({ userName: req.body.userName });     // Search for the given userName
     if (user === null) {                                            // userName NOT found in 'users' collection
+      console.log(`Login failed. used: ${req.body.userName}`)
       console.log("Fail with no matching userName")
       res.status(401).json({message:"Invalid Credentials"});
     } else {
