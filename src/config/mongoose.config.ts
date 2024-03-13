@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config()
 
-/* LOCAL MONGO CONFIG */
+/* LOCAL MONGO CONFIG 
 const DBNAME = "wedding_wordsmith";
 
 async function connect() {
@@ -15,9 +15,9 @@ async function connect() {
     }
 }
 connect();
- /* END LOCAL MONGO CONFIG */
+ END LOCAL MONGO CONFIG */
 
-/** DEPLOYED MONGO ATLAS CONFIG 
+/** DEPLOYED MONGO ATLAS CONFIG */
 
 const MONGO_USERNAME = process.env.MONGO_USERNAME || ""
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || ""
@@ -34,7 +34,7 @@ async function connect(): Promise<void> {
 }
 connect();
 
-*/
+
 
 
 // const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 1337 // MongoDB port - if local / Not Cloud ?
