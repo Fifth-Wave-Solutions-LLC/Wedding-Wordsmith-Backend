@@ -38,11 +38,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_model_1 = __importDefault(require("../models/user.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jwt = __importStar(require("jsonwebtoken"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config(); // loads any environmental variables that we have
+const server_1 = require("../../server");
 let ACCESS_TOKEN_SECRET = "";
 let REFRESH_TOKEN_SECRET = "";
-if (process.env.DEPLOYED_STATUS) {
+if (server_1.IS_DEPLOYED) {
     ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET; // For production/deployment
     REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET; // For production/deployment
 }

@@ -13,43 +13,40 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-/* LOCAL MONGO CONFIG
-const DBNAME = "wedding_wordsmith";
-
-async function connect() {
-    try {
-        await mongoose.connect(`mongodb://127.0.0.1:27017/${DBNAME}`);
-        console.log(`Established a connection to the MongoDB. Database = ${DBNAME}`)
-    } catch (err) {
-        console.log(`Error connecting to MongDB`, err );
-    }
-}
-connect();
- END LOCAL MONGO CONFIG */
-/** DEPLOYED MONGO ATLAS CONFIG */
+const server_1 = require("../../server");
+/* LOCAL MONGO CONSTANTS */
+const DB_NAME = "wedding_wordsmith";
+/** DEPLOYED MONGO ATLAS CONSTANTS */
 const MONGO_USERNAME = process.env.MONGO_USERNAME || "";
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || "";
-const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.zdfumif.mongodb.net/appName=Cluster0`;
-function connect() {
+const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@weddingwordsmith.vchrbdc.mongodb.net/appName=WeddingWordsmith`;
+/* LOCAL MONGO DB CONFIG */
+function connectLocal() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield mongoose_1.default.connect(`mongodb://127.0.0.1:27017/${DB_NAME}`);
+            console.log(`Established a connection to local MongoDB. Database = ${DB_NAME}`);
+        }
+        catch (err) {
+            console.log(`Error connecting to local MongDB`, err);
+        }
+    });
+}
+/** DEPLOYED MONGO ATLAS CONFIG */
+function connectDeployed() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield mongoose_1.default.connect(MONGO_URL, { retryWrites: true, w: 'majority' });
             console.log(`Established a connection to MongoDB Atlas`);
         }
         catch (err) {
-            console.log(`Error connecting to MongoDB`, err);
+            console.log(`Error connecting to MongoDB Atlas`, err);
         }
     });
 }
-connect();
-// const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 1337 // MongoDB port - if local / Not Cloud ?
-// const config = {
-//   mongo: {
-//     url: MONGO_URL
-//   },
-//   server: {
-//     port: SERVER_PORT 
-//   }
-// }
+if (server_1.IS_DEPLOYED) {
+    connectDeployed();
+}
+else {
+    connectLocal();
+}

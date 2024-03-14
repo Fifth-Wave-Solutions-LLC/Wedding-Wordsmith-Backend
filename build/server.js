@@ -3,12 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.IS_DEPLOYED = void 0;
 const express_1 = __importDefault(require("express"));
 const user_routes_1 = __importDefault(require("./src/routes/user.routes"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 dotenv_1.default.config(); // loads environmental variables
+exports.IS_DEPLOYED = process.env.IS_DEPLOYED !== "true" ? false : true;
 const origins = [
     'http://localhost:5173',
     'http://weddingwordsmith.com',

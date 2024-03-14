@@ -1,49 +1,37 @@
 import mongoose from 'mongoose';
-import dotenv from "dotenv";
 
-dotenv.config()
+import { IS_DEPLOYED } from '../../server';
 
-/* LOCAL MONGO CONFIG 
-const DBNAME = "wedding_wordsmith";
+/* LOCAL MONGO CONSTANTS */
+const DB_NAME = "wedding_wordsmith";
 
-async function connect() {
-    try {
-        await mongoose.connect(`mongodb://127.0.0.1:27017/${DBNAME}`);  
-        console.log(`Established a connection to the MongoDB. Database = ${DBNAME}`)
-    } catch (err) {
-        console.log(`Error connecting to MongDB`, err );
-    }
-}
-connect();
- END LOCAL MONGO CONFIG */
-
-/** DEPLOYED MONGO ATLAS CONFIG */
-
+/** DEPLOYED MONGO ATLAS CONSTANTS */
 const MONGO_USERNAME = process.env.MONGO_USERNAME || ""
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || ""
-const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.zdfumif.mongodb.net/appName=Cluster0`
+const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@weddingwordsmith.vchrbdc.mongodb.net/appName=WeddingWordsmith`
 
+/* LOCAL MONGO DB CONFIG */
+async function connectLocal() {
+    try {
+        await mongoose.connect(`mongodb://127.0.0.1:27017/${DB_NAME}`);  
+        console.log(`Established a connection to local MongoDB. Database = ${DB_NAME}`)
+    } catch (err) {
+        console.log(`Error connecting to local MongDB`, err );
+    }
+}
 
-async function connect(): Promise<void> {
+/** DEPLOYED MONGO ATLAS CONFIG */
+async function connectDeployed(): Promise<void> {
   try {
     await mongoose.connect(MONGO_URL,  { retryWrites: true, w: 'majority'});  
     console.log(`Established a connection to MongoDB Atlas`)
   } catch (err) {
-    console.log(`Error connecting to MongoDB`, err );
+    console.log(`Error connecting to MongoDB Atlas`, err );
   }
 }
-connect();
 
-
-
-
-// const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 1337 // MongoDB port - if local / Not Cloud ?
-
-// const config = {
-//   mongo: {
-//     url: MONGO_URL
-//   },
-//   server: {
-//     port: SERVER_PORT 
-//   }
-// }
+if (IS_DEPLOYED) {
+  connectDeployed();
+} else {
+  connectLocal();
+}
