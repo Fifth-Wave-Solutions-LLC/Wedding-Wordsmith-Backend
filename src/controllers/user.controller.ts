@@ -2,13 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import UserModel, { IUser } from "../models/user.model";
 import bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
 
-dotenv.config()                 // loads any environmental variables that we have
+import { IS_DEPLOYED } from '../../server';
 
 let ACCESS_TOKEN_SECRET: string = ""
 let REFRESH_TOKEN_SECRET: string = ""
-if(process.env.DEPLOYED_STATUS){
+if(IS_DEPLOYED){
    ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string // For production/deployment
    REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string // For production/deployment
 } else {

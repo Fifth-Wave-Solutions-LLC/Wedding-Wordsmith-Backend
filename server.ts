@@ -5,6 +5,8 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 dotenv.config() // loads environmental variables
 
+export const IS_DEPLOYED: boolean = process.env.IS_DEPLOYED !== "true" ? false : true
+
 const origins = [
   'http://localhost:5173',
   'http://weddingwordsmith.com', 
