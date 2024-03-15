@@ -3,28 +3,18 @@ import UserModel, { IUser } from "../models/user.model";
 import bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
-import { IS_DEPLOYED } from '../../server';
-
-let ACCESS_TOKEN_SECRET: string = ""
-let REFRESH_TOKEN_SECRET: string = ""
-if(IS_DEPLOYED){
-   ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string // For production/deployment
-   REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string // For production/deployment
-} else {
-   REFRESH_TOKEN_SECRET = "secret_key" // For development
-   ACCESS_TOKEN_SECRET = "secret_key" // For development
-}
+import { SECRET } from '../../server';
 
 const ACCESS_TOKEN_DURATION: string = '7d' // TODO reduce this once cookies are working
 const REFRESH_TOKEN_DURATION: string = '60d'
 const REFRESH_COOKIE_MAXAGE: number = 60*24*60*60*1000
 
 function generateAccessToken(user: IUser): string {
-  const accessToken = jwt.sign({ _id : user._id }, ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_DURATION });
+  const accessToken = jwt.sign({ _id : user._id }, SECRET.ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_DURATION });
   return accessToken;
 }
 function generateRefreshToken(user: IUser): string {
-  const refreshToken = jwt.sign({ _id : user._id }, REFRESH_TOKEN_SECRET, {expiresIn: REFRESH_TOKEN_DURATION}); 
+  const refreshToken = jwt.sign({ _id : user._id }, SECRET.REFRESH_TOKEN_SECRET, {expiresIn: REFRESH_TOKEN_DURATION}); 
   return refreshToken;
 }
 
@@ -49,6 +39,7 @@ const login = async(req: Request, res: Response, next: NextFunction): Promise<vo
         const partialRT = refreshToken.substring(refreshToken.length-8)  
         console.log(`Login attempt successful by ${req.body.userName}`)
         console.log(`Setting cookie with refreshToken ending with ${partialRT}`)
+        // TODO return a user object that has the password removed instead of the entire user from DB
         res
           .status(201)
           .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE, sameSite: "none", secure: true })
@@ -80,7 +71,7 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
     if (possibleUser) {
       res.status(400).json({errors: { userName : { message : 'This userName already exists. Please log in.' }}})
     } else {
-      const newUser = await UserModel.create(req.body)
+      const newUser = await UserModel.create(req.body) // TODO Might be able to add .select('-password') to remove the password from 'newUser' in this line
       // *The first value passed into jwt.sign is the 'payload'. This can be retrieved in jwt.verify
       const accessToken = generateAccessToken(newUser);
       const refreshToken = generateRefreshToken(newUser);  
