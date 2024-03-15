@@ -22,7 +22,11 @@ const origins = [
     'http://api.weddingwordsmith.com',
     'https://api.weddingwordsmith.com',
     'http://www.weddingwordsmith.com',
-    'https://www.weddingwordsmith.com'
+    'https://www.weddingwordsmith.com',
+    'http://www.wedding-ws.pro',
+    'https://www.wedding-ws.pro',
+    'http://wedding-ws.pro',
+    'https://wedding-ws.pro'
 ];
 const app = (0, express_1.default)();
 const port = 8000; // Express port
