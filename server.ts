@@ -7,6 +7,11 @@ dotenv.config() // loads environmental variables
 
 export const IS_DEPLOYED: boolean = process.env.IS_DEPLOYED !== "true" ? false : true
 
+export const SECRET = {
+  ACCESS_TOKEN_SECRET : process.env.ACCESS_TOKEN_SECRET as string,
+  REFRESH_TOKEN_SECRET : process.env.REFRESH_TOKEN_SECRET as string
+}
+
 const origins = [
   'http://localhost:5173',
   'http://weddingwordsmith.com', 
@@ -27,6 +32,10 @@ app.use(cookieParser());
 
 require("./src/config/mongoose.config"); // start database connection here
 
+/** Healthcheck route*/
+app.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong'}))
+
+//** API routes */
 app.use(userRouter)
 
 app.listen(port, ()=> console.log(`Express is listening on port: ${port}`))

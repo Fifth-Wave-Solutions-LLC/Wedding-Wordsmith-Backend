@@ -39,25 +39,15 @@ const user_model_1 = __importDefault(require("../models/user.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jwt = __importStar(require("jsonwebtoken"));
 const server_1 = require("../../server");
-let ACCESS_TOKEN_SECRET = "";
-let REFRESH_TOKEN_SECRET = "";
-if (server_1.IS_DEPLOYED) {
-    ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET; // For production/deployment
-    REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET; // For production/deployment
-}
-else {
-    REFRESH_TOKEN_SECRET = "secret_key"; // For development
-    ACCESS_TOKEN_SECRET = "secret_key"; // For development
-}
 const ACCESS_TOKEN_DURATION = '7d'; // TODO reduce this once cookies are working
 const REFRESH_TOKEN_DURATION = '60d';
 const REFRESH_COOKIE_MAXAGE = 60 * 24 * 60 * 60 * 1000;
 function generateAccessToken(user) {
-    const accessToken = jwt.sign({ _id: user._id }, ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_DURATION });
+    const accessToken = jwt.sign({ _id: user._id }, server_1.SECRET.ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_DURATION });
     return accessToken;
 }
 function generateRefreshToken(user) {
-    const refreshToken = jwt.sign({ _id: user._id }, REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_DURATION });
+    const refreshToken = jwt.sign({ _id: user._id }, server_1.SECRET.REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_DURATION });
     return refreshToken;
 }
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -82,6 +72,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
                 const partialRT = refreshToken.substring(refreshToken.length - 8);
                 console.log(`Login attempt successful by ${req.body.userName}`);
                 console.log(`Setting cookie with refreshToken ending with ${partialRT}`);
+                // TODO return a user object that has the password removed instead of the entire user from DB
                 res
                     .status(201)
                     .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE, sameSite: "none", secure: true })
@@ -112,7 +103,7 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             res.status(400).json({ errors: { userName: { message: 'This userName already exists. Please log in.' } } });
         }
         else {
-            const newUser = yield user_model_1.default.create(req.body);
+            const newUser = yield user_model_1.default.create(req.body); // TODO Might be able to add .select('-password') to remove the password from 'newUser' in this line
             // *The first value passed into jwt.sign is the 'payload'. This can be retrieved in jwt.verify
             const accessToken = generateAccessToken(newUser);
             const refreshToken = generateRefreshToken(newUser);

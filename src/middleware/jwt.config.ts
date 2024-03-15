@@ -1,18 +1,7 @@
 import { NextFunction, Request, Response }  from "express";
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
 
-dotenv.config()                                 // load environmental variables
-
-let ACCESS_TOKEN_SECRET = ""
-let REFRESH_TOKEN_SECRET = ""
-if(process.env.DEPLOYED_STATUS){
-   ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string // For production/deployment
-   REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string // For production/deployment
-} else {
-   REFRESH_TOKEN_SECRET = "secret_key" // For development
-   ACCESS_TOKEN_SECRET = "secret_key" // For development
-}
+import { SECRET } from '../../server';
 
 interface UserPayload {
   _id: string
@@ -28,7 +17,7 @@ interface UserPayload {
   */
 const authenticate = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    const payload = jwt.verify(req.headers['authorization']?.split(" ")[1] as string, ACCESS_TOKEN_SECRET) as UserPayload
+    const payload = jwt.verify(req.headers['authorization']?.split(" ")[1] as string, SECRET.ACCESS_TOKEN_SECRET) as UserPayload
     req.body.userId = payload._id
     next();
   } catch (err) {
@@ -48,7 +37,7 @@ const authenticateRefresh = (req: Request, res: Response, next: NextFunction): v
     }
     console.log(`Attempting refresh of accessToken with refreshToken ending with: ${partialRT}`)
     // console.log("about to try jwt.verify")
-    const payload = jwt.verify(req.cookies.refreshToken, REFRESH_TOKEN_SECRET) as UserPayload
+    const payload = jwt.verify(req.cookies.refreshToken, SECRET.REFRESH_TOKEN_SECRET) as UserPayload
     // console.log("payload")
     // console.log(payload)
     req.body.userId = payload._id
