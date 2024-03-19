@@ -39,7 +39,7 @@ const user_model_1 = __importDefault(require("../models/user.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jwt = __importStar(require("jsonwebtoken"));
 const server_1 = require("../../server");
-const ACCESS_TOKEN_DURATION = '7d'; // TODO reduce this once cookies are working
+const ACCESS_TOKEN_DURATION = '15s'; // TODO reduce this once cookies are working
 const REFRESH_TOKEN_DURATION = '60d';
 const REFRESH_COOKIE_MAXAGE = 60 * 24 * 60 * 60 * 1000;
 function generateAccessToken(user) {

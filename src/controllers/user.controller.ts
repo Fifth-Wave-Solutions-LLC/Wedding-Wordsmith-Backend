@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken'
 
 import { SECRET } from '../../server';
 
-const ACCESS_TOKEN_DURATION: string = '7d' // TODO reduce this once cookies are working
+const ACCESS_TOKEN_DURATION: string = '15s' // TODO reduce this once cookies are working
 const REFRESH_TOKEN_DURATION: string = '60d'
 const REFRESH_COOKIE_MAXAGE: number = 60*24*60*60*1000
 
