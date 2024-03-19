@@ -6,7 +6,9 @@ import cookieParser from 'cookie-parser'
 dotenv.config() // loads environmental variables
 
 export const IS_DEPLOYED: boolean = process.env.IS_DEPLOYED !== "true" ? false : true
-// const PORT: number = parseInt(process.env.PORT)
+
+export const PORT: number = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 9090
+console.log("PORT from .env: "+PORT)
 
 export const SECRET = {
   ACCESS_TOKEN_SECRET : process.env.ACCESS_TOKEN_SECRET as string,
@@ -28,7 +30,7 @@ const origins = [
 ]
 
 const app = express()
-const port: number = 9090 // Express port
+// const port: number = 9090 // Express port
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true})); // has to do with bodyParser
@@ -43,4 +45,4 @@ app.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong'}))
 //** API routes */
 app.use(userRouter)
 
-app.listen(port, ()=> console.log(`Express is listening on port: ${port}`))
+app.listen(PORT, ()=> console.log(`Express is listening on port: ${PORT}`))
