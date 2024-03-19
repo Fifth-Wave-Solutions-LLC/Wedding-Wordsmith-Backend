@@ -11,6 +11,7 @@ const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 dotenv_1.default.config(); // loads environmental variables
 exports.IS_DEPLOYED = process.env.IS_DEPLOYED !== "true" ? false : true;
+// const PORT: number = parseInt(process.env.PORT)
 exports.SECRET = {
     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET
@@ -29,7 +30,7 @@ const origins = [
     'https://wedding-ws.pro'
 ];
 const app = (0, express_1.default)();
-const port = 8000; // Express port
+const port = 9090; // Express port
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true })); // has to do with bodyParser
 app.use((0, cors_1.default)({ origin: origins, allowedHeaders: ['Content-Type', 'Authorization'], credentials: true }));
