@@ -3,12 +3,12 @@ import userRouter from './src/routes/user.routes'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import articleRouter from './src/routes/article.routes'
 dotenv.config() // loads environmental variables
 
 export const IS_DEPLOYED: boolean = process.env.IS_DEPLOYED !== "true" ? false : true
 
 export const PORT: number = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 9090
-console.log("PORT from .env: "+PORT)
 
 export const SECRET = {
   ACCESS_TOKEN_SECRET : process.env.ACCESS_TOKEN_SECRET as string,
@@ -19,8 +19,6 @@ const origins = [
   'http://localhost:5173',
   'http://weddingwordsmith.com', 
   'https://weddingwordsmith.com', 
-  'http://api.weddingwordsmith.com', 
-  'https://api.weddingwordsmith.com', 
   'http://www.weddingwordsmith.com', 
   'https://www.weddingwordsmith.com',
   'http://wedding-ws.pro', 
@@ -32,7 +30,6 @@ const origins = [
 ]
 
 const app = express()
-// const port: number = 9090 // Express port
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true})); // has to do with bodyParser
@@ -46,5 +43,6 @@ app.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong'}))
 
 //** API routes */
 app.use(userRouter)
+app.use(articleRouter)
 
 app.listen(PORT, ()=> console.log(`Express is listening on port: ${PORT}`))
