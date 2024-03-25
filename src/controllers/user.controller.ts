@@ -5,8 +5,8 @@ import * as jwt from 'jsonwebtoken'
 
 import { SECRET } from '../../server';
 
-const ACCESS_TOKEN_DURATION: string = '15s' // TODO reduce this once cookies are working
-const REFRESH_TOKEN_DURATION: string = '60d'
+const ACCESS_TOKEN_DURATION: string = '15m'
+const REFRESH_TOKEN_DURATION: string = '30d'
 const REFRESH_COOKIE_MAXAGE: number = 60*24*60*60*1000
 
 function generateAccessToken(user: IUser): string {
@@ -110,7 +110,14 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
-export default { login, create, updateUser, register, logout, refreshToken }  
+
+const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
+  UserModel.find({})
+  .then(allUsers => res.status(200).json(allUsers))
+  .catch(err => res.status(400).json(err))
+}
+
+export default { login, create, updateUser, register, logout, refreshToken, getAllUsers }  
 
 
 /*
@@ -156,10 +163,4 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
 }
 */
 
-/* Temporary, for development only
-const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
-  UserModel.find({})
-  .then(allUsers => res.status(200).json(allUsers))
-  .catch(err => res.status(400).json(err))
-}
-*/
+

@@ -39,8 +39,8 @@ const user_model_1 = __importDefault(require("../models/user.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jwt = __importStar(require("jsonwebtoken"));
 const server_1 = require("../../server");
-const ACCESS_TOKEN_DURATION = '15s'; // TODO reduce this once cookies are working
-const REFRESH_TOKEN_DURATION = '60d';
+const ACCESS_TOKEN_DURATION = '15m';
+const REFRESH_TOKEN_DURATION = '30d';
 const REFRESH_COOKIE_MAXAGE = 60 * 24 * 60 * 60 * 1000;
 function generateAccessToken(user) {
     const accessToken = jwt.sign({ _id: user._id }, server_1.SECRET.ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_DURATION });
@@ -141,7 +141,12 @@ const refreshToken = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         res.status(400).json(err);
     }
 });
-exports.default = { login, create, updateUser, register, logout, refreshToken };
+const getAllUsers = (req, res, next) => {
+    user_model_1.default.find({})
+        .then(allUsers => res.status(200).json(allUsers))
+        .catch(err => res.status(400).json(err));
+};
+exports.default = { login, create, updateUser, register, logout, refreshToken, getAllUsers };
 /*
 
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
@@ -180,13 +185,6 @@ updateUser: async (req, res) => {
 const createUser = (req: Request, res: Response, next: NextFunction) => {
   UserModel.create(req.body)
   .then(newUser => res.status(201).json(newUser))
-  .catch(err => res.status(400).json(err))
-}
-*/
-/* Temporary, for development only
-const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
-  UserModel.find({})
-  .then(allUsers => res.status(200).json(allUsers))
   .catch(err => res.status(400).json(err))
 }
 */
