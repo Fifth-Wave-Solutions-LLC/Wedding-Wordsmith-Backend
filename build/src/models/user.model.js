@@ -34,8 +34,15 @@ const UserSchema = new mongoose_1.default.Schema({
     roles: [{
             type: Number
         }],
+    sponsor: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "User"
+    },
     tokenBalance: {
         type: Number
+    },
+    accessExpires: {
+        type: Date
     }
 }, {
     timestamps: true

@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const article_model_1 = __importDefault(require("../models/article.model"));
 const getAllArticles = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const allArticles = yield article_model_1.default.find({});
+        const allArticles = yield article_model_1.default.find({}).populate('owner');
         res.status(200).json(allArticles);
     }
     catch (err) {

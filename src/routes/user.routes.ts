@@ -6,9 +6,9 @@ const userRouter = Router()
 
 userRouter.post("/api/login", UserController.login);
 userRouter.get("/api/users", UserController.getAllUsers);// add middleware
-userRouter.post("/api/users/create", UserController.create); // add middleware
-userRouter.put("/api/users/:id",  UserController.updateUser); // add middleware
-userRouter.post("/api/register", UserController.register);
+// userRouter.post("/api/users", UserController.create); 
+userRouter.put("/api/users/:id",  UserController.update); // add middleware
+userRouter.post("/api/mngregister", UserController.managerRegister);
 userRouter.post("/api/logout", UserController.logout); 
 
 userRouter.get("/api/refresh", authenticateRefresh, UserController.refreshToken);

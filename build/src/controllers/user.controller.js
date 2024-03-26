@@ -88,14 +88,30 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(400).json(err);
     }
 });
-// This is where an MANAGER can create a new INVITEE with NO permission
 const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
-// A MANAGER or MEMBER can update their profile
-const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
-// An INVITEE can become a MEMBER by registering
-const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const managerRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    req.body.userName = req.body.userName.toLowerCase();
+    try {
+        const possibleUser = yield user_model_1.default.findOne({ userName: req.body.userName });
+        if (possibleUser) {
+            res.status(400).json({ errors: { userName: { message: 'This Username already exists. Please choose another.' } } });
+        }
+        else {
+            const newUser = yield user_model_1.default.create(req.body); // TODO Might be able to add .select('-password') to remove the password from 'newUser' in this line
+            res
+                .status(201)
+                .json({ msg: "Successfully created user" });
+        }
+    }
+    catch (err) {
+        res.status(400).json(err);
+    }
+});
+/** Potential future route... */
+const selfRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     req.body.userName = req.body.userName.toLowerCase();
     try {
         const possibleUser = yield user_model_1.default.findOne({ userName: req.body.userName });
@@ -141,12 +157,16 @@ const refreshToken = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         res.status(400).json(err);
     }
 });
-const getAllUsers = (req, res, next) => {
-    user_model_1.default.find({})
-        .then(allUsers => res.status(200).json(allUsers))
-        .catch(err => res.status(400).json(err));
-};
-exports.default = { login, create, updateUser, register, logout, refreshToken, getAllUsers };
+const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const allUsers = yield user_model_1.default.find({}).select('-password').populate('sponsor').exec(); // TODO remove password from populated response
+        res.status(200).json(allUsers);
+    }
+    catch (err) {
+        res.status(400).json(err);
+    }
+});
+exports.default = { login, create, update, managerRegister, logout, refreshToken, getAllUsers };
 /*
 
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
