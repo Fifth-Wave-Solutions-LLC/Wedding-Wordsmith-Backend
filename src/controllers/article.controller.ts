@@ -4,7 +4,7 @@ import ArticleModel, { IArticle } from "../models/article.model";
 
 const getAllArticles = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const allArticles = await ArticleModel.find({})
+    const allArticles = await ArticleModel.find({}).populate('owner')
     res.status(200).json(allArticles)
   } catch (err) {
     res.status(400).json(err);

@@ -10,7 +10,9 @@ export interface IUser {
   password: string;
   _confirmPassword: string;
   roles: number[];
+  sponsor?: mongoose.Schema.Types.ObjectId;
   tokenBalance: number;
+  accessExpires?: mongoose.Schema.Types.Date;
   createdAt: mongoose.Schema.Types.Date;
   updatedAt: mongoose.Schema.Types.Date;
 }
@@ -43,10 +45,17 @@ const UserSchema = new mongoose.Schema<IUser>({
     },
     roles: [{
       type: Number
-    }], 
+    }],
+    sponsor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }, 
     tokenBalance: {
       type: Number
-    } 
+    },
+    accessExpires: {
+      type: Date
+    }
   }, {
     timestamps: true
   });

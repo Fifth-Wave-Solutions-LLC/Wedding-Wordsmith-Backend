@@ -55,16 +55,32 @@ const login = async(req: Request, res: Response, next: NextFunction): Promise<vo
   }
 }
 
-// This is where an MANAGER can create a new INVITEE with NO permission
 const create = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
 }
 
-// A MANAGER or MEMBER can update their profile
-const updateUser = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
+const update = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
 }
 
-// An INVITEE can become a MEMBER by registering
-const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const managerRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  req.body.userName = req.body.userName.toLowerCase()
+  try {
+    const possibleUser = await UserModel.findOne({ userName : req.body.userName })
+    if (possibleUser) {
+      res.status(400).json({errors: { userName : { message : 'This Username already exists. Please choose another.' }}})
+    } else {
+      const newUser = await UserModel.create(req.body) // TODO Might be able to add .select('-password') to remove the password from 'newUser' in this line
+      res
+        .status(201)
+        .json({msg: "Successfully created user"})
+      }
+  }
+  catch(err) {
+    res.status(400).json(err)
+  }
+}
+
+/** Potential future route... */
+const selfRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   req.body.userName = req.body.userName.toLowerCase()
   try {
     const possibleUser = await UserModel.findOne({ userName : req.body.userName })
@@ -110,14 +126,17 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
+const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const allUsers = await UserModel.find({}).select('-password').populate('sponsor').exec() // TODO remove password from populated response
+    res.status(200).json(allUsers)
+  } catch (err) {
+    res.status(400).json(err);
+  }
 
-const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
-  UserModel.find({})
-  .then(allUsers => res.status(200).json(allUsers))
-  .catch(err => res.status(400).json(err))
 }
 
-export default { login, create, updateUser, register, logout, refreshToken, getAllUsers }  
+export default { login, create, update, managerRegister, logout, refreshToken, getAllUsers }  
 
 
 /*
