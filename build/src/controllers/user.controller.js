@@ -53,34 +53,43 @@ function generateRefreshToken(user) {
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Login attempt by ${req.body.userName}`);
     req.body.userName = req.body.userName.toLowerCase();
-    console.log(`Login string used: ${req.body.userName}`);
+    // console.log(`Login string used: ${req.body.userName}`)
     try {
         const user = yield user_model_1.default.findOne({ userName: req.body.userName }); // Search for the given userName
         if (user === null) { // userName NOT found in 'users' collection
-            console.log(`Login failed. used: ${req.body.userName}`);
+            // console.log(`Login failed. used: ${req.body.userName}`)
             console.log("Fail with no matching userName");
             res.status(401).json({ message: "Invalid Credentials" });
         }
         else {
-            const isCorrectPW = yield bcrypt_1.default.compare(req.body.password, user.password); // compare PW given with PW hash in DB
-            // console.log("There is a matching userName")
-            if (isCorrectPW) { // Password was a match!
-                // *The first value passed into jwt.sign is the 'payload'. This can be retrieved in jwt.verify
-                // console.log("There is a matching password")
-                const accessToken = generateAccessToken(user);
-                const refreshToken = generateRefreshToken(user);
-                const partialRT = refreshToken.substring(refreshToken.length - 8);
-                console.log(`Login attempt successful by ${req.body.userName}`);
-                console.log(`Setting cookie with refreshToken ending with ${partialRT}`);
-                // TODO return a user object that has the password removed instead of the entire user from DB
-                res
-                    .status(201)
-                    .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE, sameSite: "none", secure: true })
-                    .json({ msg: "Successful login", user: user, accessToken: accessToken });
+            // console.log(user)
+            // console.log(user.accessExpires)
+            // console.log(new Date())
+            if (user.accessExpires && new Date("" + user.accessExpires).getTime() < new Date().getTime()) { // if the user has an expiry and it is past, then reject login
+                console.log("Fail with access has expired");
+                res.status(403).json({ message: "Access has expired" });
             }
-            else { // Password was NOT a match
-                console.log("Fail with incorrect password");
-                res.status(401).json({ message: "Invalid Credentials" });
+            else {
+                const isCorrectPW = yield bcrypt_1.default.compare(req.body.password, user.password); // compare PW given with PW hash in DB
+                // console.log("There is a matching userName")
+                if (isCorrectPW) { // Password was a match!
+                    // *The first value passed into jwt.sign is the 'payload'. This can be retrieved in jwt.verify
+                    // console.log("There is a matching password")
+                    const accessToken = generateAccessToken(user);
+                    const refreshToken = generateRefreshToken(user);
+                    const partialRT = refreshToken.substring(refreshToken.length - 8);
+                    console.log(`Login attempt successful by ${req.body.userName}`);
+                    console.log(`Setting cookie with refreshToken ending with ${partialRT}`);
+                    // TODO return a user object that has the password removed instead of the entire user from DB
+                    res
+                        .status(201)
+                        .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: REFRESH_COOKIE_MAXAGE, sameSite: "none", secure: true })
+                        .json({ msg: "Successful login", user: user, accessToken: accessToken });
+                }
+                else { // Password was NOT a match
+                    console.log("Fail with incorrect password");
+                    res.status(401).json({ message: "Invalid Credentials" });
+                }
             }
         }
     }
@@ -91,6 +100,24 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
 const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log("Update has been requested")
+    req.body.userName = req.body.userName.toLowerCase();
+    try {
+        const usersWithMatchingUsernames = yield user_model_1.default.find({ userName: req.body.userName }); // find all records that have this username
+        const userNameAlreadyExists = usersWithMatchingUsernames.some((user) => user._id != req.body._id); // return true if one userId !== this userId
+        if (userNameAlreadyExists) {
+            res.status(400).json({ errors: { userName: { message: 'This Username already exists. Please choose another.' } } });
+        }
+        else {
+            const updatedUser = yield user_model_1.default.findOneAndUpdate({ _id: req.body._id }, req.body, { new: true, runValidators: true }).select('-password');
+            res
+                .status(200)
+                .json({ msg: "Successfully updated user" });
+        }
+    }
+    catch (err) {
+        res.status(400).json(err);
+    }
 });
 const managerRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     req.body.userName = req.body.userName.toLowerCase();
@@ -166,19 +193,19 @@ const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         res.status(400).json(err);
     }
 });
-exports.default = { login, create, update, managerRegister, logout, refreshToken, getAllUsers };
+const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const oneUser = yield user_model_1.default
+            .findById({ _id: req.params.id }).select('-password').populate('sponsor').exec();
+        res.status(200).json(oneUser);
+    }
+    catch (err) {
+        res.status(400).json(err);
+    }
+});
+exports.default = { login, create, update, managerRegister, logout, refreshToken, getAllUsers, getUserById };
 /*
 
-const getUserById = async (req: Request, res: Response, next: NextFunction) => {
-  try{
-    const oneUser = await UserModel
-    .findById({_id : req.params.id})
-    res.status(200).json(oneUser);
-  }
-  catch (err){
-    res.status(400).json(err);
-  }
-}
 
 const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
   try{

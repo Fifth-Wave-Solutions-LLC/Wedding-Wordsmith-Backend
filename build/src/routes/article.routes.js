@@ -5,10 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const article_controller_1 = __importDefault(require("../controllers/article.controller"));
+const jwt_config_1 = require("../middleware/jwt.config");
 const articleRouter = (0, express_1.Router)();
-articleRouter.get("/api/articles", article_controller_1.default.getAllArticles); // add middleware
+articleRouter.get("/api/articles", jwt_config_1.authenticate, article_controller_1.default.getAllArticles); // add middleware
 // articleRouter.get("/api/articles/:id",  ArticleController.getArticleById); // add middleware
-articleRouter.post("/api/articles", article_controller_1.default.createArticle);
+articleRouter.post("/api/articles", jwt_config_1.authenticate, article_controller_1.default.createArticle);
 // articleRouter.put("/api/articles/:id",  ArticleController.updateArticle); // add middleware
 // articleRouter.delete("/api/article/:id", ArticleController.deleteArticle); 
 exports.default = articleRouter;
